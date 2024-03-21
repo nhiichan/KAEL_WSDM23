@@ -1,14 +1,13 @@
 import datetime
 import os
 
-from BaseDetectors import params
 from BaseDetectors.basedetector_TNR import base_detector
 
 if __name__ == '__main__':
     start = datetime.datetime.now()
 
-    anomalies = [params.anomaly_ratio]
-    model_name = ['DistMult']  # "TransE", "ComplEx", "DistMult"
+    anomalies = [0]
+    model_name = ['ComplEx']  # "TransE", "ComplEx", "DistMult"
 
     kk = [50]
     for s in range(len(kk)):
@@ -22,7 +21,7 @@ if __name__ == '__main__':
     print(start)
     print(end)
 
-    modelname = 'DistMult'
+    modelname = 'ComplEx'
     dataset = 'UMLS'  # UMLS WN FB
 
     outpath = './ranking/' + dataset

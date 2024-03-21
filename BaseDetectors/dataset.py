@@ -86,40 +86,40 @@ class Reader:
 
     def read_triples(self):
         print('Read begin!')
-        for file in ["train", "valid", "test"]:
-            with open(self.path + '/' + file + ".txt", "r") as f:
-                for line in f.readlines():
-                    try:
-                        head, rel, tail = line.strip().split("\t")
-                    except:
-                        print(line)
-                    head_id = self.get_add_ent_id(head)
-                    rel_id = self.get_add_rel_id(rel)
-                    tail_id = self.get_add_ent_id(tail)
+        # for file in ["train", "valid", "test"]:
+        with open(self.path + '/' + "UMLS-raw.txt", "r") as f:
+            for line in f.readlines():
+                try:
+                    head, rel, tail, _ = line.strip().split(" ")
+                except:
+                    print(line)
+                head_id = self.get_add_ent_id(head)
+                rel_id = self.get_add_rel_id(rel)
+                tail_id = self.get_add_ent_id(tail)
 
-                    self.triples[file].append((head_id, rel_id, tail_id))
-                    self.triplelist[str([int(head_id), int(rel_id), int(tail_id)])] = str([head, rel, tail])
+                # self.triples["train"].append((head_id, rel_id, tail_id))
+                self.triplelist[str([int(head_id), int(rel_id), int(tail_id)])] = str([head, rel, tail])
 
-                    self.A[(head_id, tail_id)] = rel_id
-                    # self.A[head_id][tail_id] = rel_id
+                self.A[(head_id, tail_id)] = rel_id
+                # self.A[head_id][tail_id] = rel_id
 
-                    # generate h2t
-                    if not head_id in self.h2t.keys():
-                        self.h2t[head_id] = set()
-                    temp = self.h2t[head_id]
-                    temp.add(tail_id)
-                    self.h2t[head_id] = temp
+                # generate h2t
+                if not head_id in self.h2t.keys():
+                    self.h2t[head_id] = set()
+                temp = self.h2t[head_id]
+                temp.add(tail_id)
+                self.h2t[head_id] = temp
 
-                    # generate t2h
-                    if not tail_id in self.t2h.keys():
-                        self.t2h[tail_id] = set()
-                    temp = self.t2h[tail_id]
-                    temp.add(head_id)
-                    self.t2h[tail_id] = temp
-                    # if is_train: 
-                    #     self.triples[file].append((head_id, rel_id, tail_id, 1))
-                    # else:
-                    #     self.triples[file].append((head_id, rel_id, tail_id))
+                # generate t2h
+                if not tail_id in self.t2h.keys():
+                    self.t2h[tail_id] = set()
+                temp = self.t2h[tail_id]
+                temp.add(head_id)
+                self.t2h[tail_id] = temp
+                # if is_train:
+                #     self.triples[file].append((head_id, rel_id, tail_id, 1))
+                # else:
+                #     self.triples[file].append((head_id, rel_id, tail_id))
 
         print("Read end!")
         return self.triples
@@ -226,7 +226,7 @@ class Reader:
         bn_triples = self.generate_anomalous_triples(bp_triples)
         all_triples = bp_triples + bn_triples
         # print('------------------',len(all_triples))
-        # print('all_triples:',all_triples)
+        # print('all_triples:', all_triples)
 
         return self.toarray(all_triples), self.toarray(labels)
 
