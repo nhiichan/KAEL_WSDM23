@@ -1,14 +1,15 @@
 from threading import Thread
+
 from tqdm import tqdm, trange
-import utils as dp
-import logging
+
 import param
+import utils as dp
 
 
 class MAB():
 
     def __init__(self, opportunities, dictionary, detected, θ, ita) -> None:
-        self.oppoetunities = opportunities
+        self.opportunities = opportunities
         self.dictionary = dictionary
         self.detected = detected
         self.θ = θ
@@ -28,7 +29,7 @@ class MAB():
         Y = [[]] * param.k
         for ini in tqdm(range(param.k)):
             for i in range(len(overlaps)):
-                #print('------ Iteration ------',i)
+                # print('------ Iteration ------',i)
                 reward = dp.rewarding(
                     self.dictionary, overlaps[i]
                 )  # Check label by rewarding, 1 means anomaly, 0 means nominal
@@ -40,10 +41,10 @@ class MAB():
                     Y[ini], rewards[ini],
                     para_lambda4[ini])  # Update θ for current cluster
                 self.ita[ini] = dp.ita_update_torch(
-                        Y[ini], overlaps[i],
+                    Y[ini], overlaps[i],
                     para_lambda4[ini])  # Update ita for current cluster
                 total_rewards += reward
-                #**************************************************#
+                # **************************************************#
         print('*************************')
         print('❀❀❀❀❀❀❀❀❀❀ Initialized successfully ❀❀❀❀❀❀❀❀❀❀')
         return self.θ, self.ita, rewards, Y
@@ -86,7 +87,7 @@ class MAB():
             for thread in threads:
                 thread.join()
 
-            #**************************************************#
+            # **************************************************#
             bestarm = expectation.index(
                 max(expectation))  # Find the best among 3
             reward = dp.rewarding(

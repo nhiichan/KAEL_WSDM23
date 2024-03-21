@@ -174,9 +174,10 @@ def calculate_lambda(dictionary, triples):
     alphas_to_test = np.linspace(0.001, 1, num=100)
     # Crossvalidation, normalize
     model = linear_model.RidgeCV(alphas=alphas_to_test,
-                                 normalize=True,
                                  store_cv_values=False,
-                                 cv=10)
+                                 cv=10,
+                                 fit_intercept=True,
+                                 )
     model.fit(X, y)
     # Select the regularization coefficient that minimizes the mean square error under cross validation to prevent overfitting
     # Which returns the best lambda, called alpha in model

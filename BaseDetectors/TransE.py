@@ -1,9 +1,9 @@
 import logging
+
 import torch
 import torch.nn as nn
-import params
-import pandas as pd
-from torch.autograd import Variable
+
+from BaseDetectors import params
 
 scoredict = {}
 
@@ -31,7 +31,7 @@ class TransE(nn.Module):
         return torch.norm(h + r - t, p=params.p_norm, dim=1)
 
     def forward(self, batch_h, batch_t, batch_r, batch_y):
-        #print('batch_h:',batch_h)
+        # print('batch_h:',batch_h)
         h = self.ent_embeddings(batch_h)
         t = self.ent_embeddings(batch_t)
         r = self.rel_embeddings(batch_r)

@@ -1,9 +1,7 @@
-import numpy as np
 import random
+
+import numpy as np
 import torch
-import math
-import params
-from random import shuffle
 
 
 class Reader:
@@ -36,7 +34,7 @@ class Reader:
 
         self.num_triples_with_anomalies = len(self.bp_triples_label)
         self.train_data, self.labels = self.get_data()
-        
+
         self.triples_with_anomalies, self.triples_with_anomalies_labels = self.get_data_test()
 
     def train_triples(self):
@@ -47,8 +45,6 @@ class Reader:
 
     def test_triples(self):
         return self.triples["test"]
-
-
 
     def num_ent(self):
         return len(self.ent2id)
@@ -94,15 +90,15 @@ class Reader:
             with open(self.path + '/' + file + ".txt", "r") as f:
                 for line in f.readlines():
                     try:
-                        head, rel, tail= line.strip().split("\t")
+                        head, rel, tail = line.strip().split("\t")
                     except:
                         print(line)
                     head_id = self.get_add_ent_id(head)
                     rel_id = self.get_add_rel_id(rel)
-                    tail_id = self.get_add_ent_id(tail) 
+                    tail_id = self.get_add_ent_id(tail)
 
                     self.triples[file].append((head_id, rel_id, tail_id))
-                    self.triplelist[str([int(head_id), int(rel_id), int(tail_id)])] = str([head,rel,tail])
+                    self.triplelist[str([int(head_id), int(rel_id), int(tail_id)])] = str([head, rel, tail])
 
                     self.A[(head_id, tail_id)] = rel_id
                     # self.A[head_id][tail_id] = rel_id
@@ -225,12 +221,12 @@ class Reader:
     def get_data(self):
         # bp_triples_label = self.inject_anomaly()
         bp_triples_label = self.bp_triples_label
-        labels     = [bp_triples_label[i][1] for i in range(len(bp_triples_label))]
+        labels = [bp_triples_label[i][1] for i in range(len(bp_triples_label))]
         bp_triples = [bp_triples_label[i][0] for i in range(len(bp_triples_label))]
         bn_triples = self.generate_anomalous_triples(bp_triples)
         all_triples = bp_triples + bn_triples
-        #print('------------------',len(all_triples))
-        #print('all_triples:',all_triples)
+        # print('------------------',len(all_triples))
+        # print('all_triples:',all_triples)
 
         return self.toarray(all_triples), self.toarray(labels)
 
@@ -238,7 +234,7 @@ class Reader:
         bp_triples_label = self.bp_triples_label
         labels = [bp_triples_label[i][1] for i in range(len(bp_triples_label))]
         bp_triples = [bp_triples_label[i][0] for i in range(len(bp_triples_label))]
-        #print('------------------',len(bp_triples))
+        # print('------------------',len(bp_triples))
 
         return self.toarray(bp_triples), self.toarray(labels)
 
@@ -246,12 +242,12 @@ class Reader:
         return torch.from_numpy(np.array(list(x)).astype(np.int32))
 
     def inject_anomaly(self):
-        triple_anomaly_label = [] 
-        #generate labels including anomaly number
+        triple_anomaly_label = []
+        # generate labels including anomaly number
         print("Inject anomalies!")
         f = open('./raw/UMLS-raw.txt')
         for line in f.readlines():
-            a,b,c,label = line.split(' ')
-            x = ((self.ent2id[a],self.rel2id[b],self.ent2id[c]),label)
+            a, b, c, label = line.split(' ')
+            x = ((self.ent2id[a], self.rel2id[b], self.ent2id[c]), label)
             triple_anomaly_label.append(x)
         return triple_anomaly_label

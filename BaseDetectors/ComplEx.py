@@ -1,12 +1,13 @@
 import logging
+
 import torch
 import torch.nn as nn
-import params
-import pandas as pd
-tripledict = {}
-scoredict ={}
-idvecdict = {}
 
+from BaseDetectors import params
+
+tripledict = {}
+scoredict = {}
+idvecdict = {}
 
 
 class ComplEx(nn.Module):
@@ -53,28 +54,28 @@ class ComplEx(nn.Module):
         t_im = self.ent_im_embeddings(batch_t)
         r_re = self.rel_re_embeddings(batch_r)
         r_im = self.rel_im_embeddings(batch_r)
-  
+
         y = torch.from_numpy(batch_y).type(torch.FloatTensor)
 
         score = self.get_score(h_re, h_im, t_re, t_im, r_re, r_im)
         pos_score = score[0: int(len(score) / 2)]
         neg_score = score[int(len(score) / 2): len(score)]
-        
-        print('#####################',len(score))
+
+        print('#####################', len(score))
         for i in range(len(score)):
-            idtriple = str([batch_h.cpu().detach().numpy()[i],batch_r.cpu().detach().numpy()[i],batch_t.cpu().detach().numpy()[i]])
+            idtriple = str([batch_h.cpu().detach().numpy()[i], batch_r.cpu().detach().numpy()[i],
+                            batch_t.cpu().detach().numpy()[i]])
             # if idtriple in dictionary.keys():
             scoredict[idtriple] = score.cpu().detach().numpy()[i]
-        print('#####################',len(scoredict))        
-        
+        print('#####################', len(scoredict))
 
         regul = (
-            torch.mean(h_re ** 2)
-            + torch.mean(h_im ** 2)
-            + torch.mean(t_re ** 2)
-            + torch.mean(t_im ** 2)
-            + torch.mean(r_re ** 2)
-            + torch.mean(r_im ** 2)
+                torch.mean(h_re ** 2)
+                + torch.mean(h_im ** 2)
+                + torch.mean(t_re ** 2)
+                + torch.mean(t_im ** 2)
+                + torch.mean(r_re ** 2)
+                + torch.mean(r_im ** 2)
         )
         # loss = torch.mean(self.criterion(score * y)) + params.lmbda * regul
         loss = self.criterion(pos_score.cpu(), neg_score.cpu(), torch.Tensor([-1]))
