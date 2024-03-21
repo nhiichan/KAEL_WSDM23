@@ -7,7 +7,7 @@ if __name__ == '__main__':
     start = datetime.datetime.now()
 
     anomalies = [0]
-    model_name = ['ComplEx']  # "TransE", "ComplEx", "DistMult"
+    model_name = ['TransE']  # "TransE", "ComplEx", "DistMult"
 
     kk = [50]
     for s in range(len(kk)):
@@ -21,13 +21,22 @@ if __name__ == '__main__':
     print(start)
     print(end)
 
-    modelname = 'ComplEx'
+    modelname = 'TransE'
     dataset = 'UMLS'  # UMLS WN FB
 
     outpath = './ranking/' + dataset
 
     if not os.path.exists(outpath):
         os.makedirs(outpath)
+
+    if modelname == 'TransE':
+        embedding_path = outpath + '/default_embedding.txt'
+        with open(embedding_path, 'w') as f:
+            for triple in triplelist.keys():
+                f.write(triplelist[triple])
+                f.write('\t')
+                f.write(triple)
+                f.write('\n')
 
     # print(len(scoredict))
     # print(len(triplelist))
